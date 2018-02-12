@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/urfave/cli"
@@ -10,14 +12,14 @@ import (
 
 // Config from config directory
 type Config struct {
-	Reviewer []ReviewerConfig `toml:"Reviewer"`
-	Slack    SlackConfig      `toml:"Slack"`
+	Reviewers []ReviewerConfig `toml:"Reviewer"`
+	Slack     SlackConfig      `toml:"Slack"`
 }
 
 // ReviewerConfig from config.toml
 type ReviewerConfig struct {
-	Name    string `toml:"name"`
-	Account string `toml:"account"`
+	Name         string `toml:"name"`
+	SlackAccount string `toml:"slack_account"`
 }
 
 // SlackConfig from config.toml
@@ -32,16 +34,31 @@ func main() {
 	app.Name = "codereview"
 	app.Usage = "please code review!"
 	app.Action = func(c *cli.Context) error {
-		var file = "./config/config.toml"
-		_, err := toml.DecodeFile(file, &config)
+		loadConfig()
 
-		if err != nil {
-			panic(err)
-		}
+		reviewer := selectReviewer()
+		message := reviewer.SlackAccount + " " + reviewer.Name + "さん、コードレビューをお願いします！ " + c.Args().First()
+		fmt.Println(message)
 
-		fmt.Println(config)
 		return nil
 	}
 
 	app.Run(os.Args)
+}
+
+func loadConfig() {
+	var file = "./config/config.toml"
+	_, err := toml.DecodeFile(file, &config)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func selectReviewer() ReviewerConfig {
+	reviewerCount := len(config.Reviewers)
+	rand.Seed(time.Now().UnixNano())
+	reviewerNum := rand.Intn(reviewerCount)
+
+	return config.Reviewers[reviewerNum]
 }
