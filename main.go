@@ -8,13 +8,21 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Config from config directory
 type Config struct {
-	Reviewer ReviewerConfig
+	Reviewer []ReviewerConfig `toml:"Reviewer"`
+	Slack    SlackConfig      `toml:"Slack"`
 }
 
+// ReviewerConfig from config.toml
 type ReviewerConfig struct {
-	Name    string
-	account string
+	Name    string `toml:"name"`
+	Account string `toml:"account"`
+}
+
+// SlackConfig from config.toml
+type SlackConfig struct {
+	Channel string
 }
 
 var config Config
@@ -24,8 +32,14 @@ func main() {
 	app.Name = "codereview"
 	app.Usage = "please code review!"
 	app.Action = func(c *cli.Context) error {
-		_, err := toml.DecodeFile("./config/config.toml", &config)
-		fmt.Println("boom! I say!")
+		var file = "./config/config.toml"
+		_, err := toml.DecodeFile(file, &config)
+
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(config)
 		return nil
 	}
 
