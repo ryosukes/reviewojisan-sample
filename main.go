@@ -38,6 +38,8 @@ func main() {
 
 		reviewer := selectReviewer()
 		message := generateMessage(reviewer, c)
+
+		// TODO: send message to slack
 		fmt.Println(message)
 
 		return nil
