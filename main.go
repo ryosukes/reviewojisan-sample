@@ -37,7 +37,7 @@ func main() {
 		loadConfig()
 
 		reviewer := selectReviewer()
-		message := reviewer.SlackAccount + " " + reviewer.Name + "さん、コードレビューをお願いします！ " + c.Args().First()
+		message := generateMessage(reviewer, c)
 		fmt.Println(message)
 
 		return nil
@@ -61,4 +61,8 @@ func selectReviewer() ReviewerConfig {
 	reviewerNum := rand.Intn(reviewerCount)
 
 	return config.Reviewers[reviewerNum]
+}
+
+func generateMessage(reviewer ReviewerConfig, c *cli.Context) string {
+	return reviewer.SlackAccount + " " + reviewer.Name + "さん、コードレビューをお願いします！ " + c.Args().First()
 }
