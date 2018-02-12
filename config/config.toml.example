@@ -1,0 +1,7 @@
+[[reviewer]]
+  name="hoge"
+  account="fuga"
+[[slack]]
+  channel="piyo"
+[[option]]
+  group=""
