@@ -1,7 +1,6 @@
-[[reviewer]]
+[[Reviewer]]
   name="hoge"
   account="fuga"
-[[slack]]
+[Slack]
   channel="piyo"
-[[option]]
   group=""
